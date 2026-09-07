@@ -37,14 +37,10 @@ export function evaluateBuySignal(
     };
   }
 
-  // Ensure cash meets base trade size
-  const baseTradeSize = config.tradeSizeUsd;
-  if (currentCash < baseTradeSize) {
   // Minimum viable trade is $1.00
   if (currentCash < 1.0) {
     return {
       shouldBuy: false,
-      reason: `Insufficient cash ($${currentCash.toFixed(2)} < $${baseTradeSize.toFixed(2)})`,
       reason: `Insufficient cash ($${currentCash.toFixed(2)} < $1.00 min)`,
       allocatedAmountUsd: 0,
     };
@@ -138,8 +134,7 @@ export function evaluateBuySignal(
   return {
     shouldBuy: true,
     reason: `Super Sniper: Strong buyer velocity (+${token.priceChange5m.toFixed(1)}% 5m, ${token.buys5m}B/${token.sells5m}S, Safety ${safety.score})`,
-    allocatedAmountUsd: Math.min(dynamicTradeSize, currentCash),
-    allocatedAmountUsd: Math.min(tradeSize, currentCash),
+    allocatedAmountUsd: Math.max(1.0, Math.min(dynamicTradeSize, currentCash)),
   };
 }
 
