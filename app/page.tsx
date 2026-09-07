@@ -521,7 +521,7 @@ export default function Home() {
             if (updatedPositions.length >= currentConfig.maxConcurrentPositions) break;
             if (runningCash < currentConfig.tradeSizeUsd) break;
 
-            const buyDecision = evaluateBuySignal(token, updatedPositions, currentConfig, runningCash);
+            const buyDecision = evaluateBuySignal(token, updatedPositions, runningCash, currentConfig);
 
             if (buyDecision.shouldBuy) {
               const tradeSize = buyDecision.allocatedAmountUsd;
