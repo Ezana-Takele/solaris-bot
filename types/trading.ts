@@ -25,6 +25,11 @@ export interface TokenData {
   sellTax?: number;
   isPumpFun: boolean;
   bondingCurveProgress?: number;
+  clusteredHoldersPercentage?: number;
+  clusterRiskScore?: number;
+  smartMoneyBuysCount?: number;
+  jitoProtected?: boolean;
+  graduationEstimatedMin?: number;
   imageUrl?: string;
   socials?: {
     twitter?: string;
@@ -91,6 +96,14 @@ export interface BotConfig {
   jitoTipSol: number;
   simulationSpeed: 'NORMAL' | 'TURBO';
   priceFeedMode: 'REAL_TIME_DEX' | 'ACCELERATED_SIM';
+  // Top 1% Institutional Alpha Controls:
+  enableBondingCurveSnipe: boolean;
+  bondingCurveMinPercent: number;
+  enableCabalFilter: boolean;
+  maxCabalClusterPercent: number;
+  enableSmartMoneyMirror: boolean;
+  minSmartMoneyWallets: number;
+  enableJitoShield: boolean;
 }
 
 export interface BotStats {

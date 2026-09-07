@@ -368,6 +368,53 @@ export const BotControlPanel: React.FC<BotControlPanelProps> = ({
           </label>
         </div>
 
+        {/* Top 1% Institutional Alpha Toggles */}
+        <div className="flex items-center gap-3 flex-wrap pt-2 w-full border-t border-border/40">
+          <span className="text-[10px] font-mono uppercase font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded">
+            Top 1% Alpha
+          </span>
+
+          <label className="flex items-center gap-1.5 cursor-pointer select-none text-xs font-semibold text-amber-300 bg-amber-950/30 border border-amber-500/40 px-2.5 py-1 rounded-lg">
+            <input
+              type="checkbox"
+              checked={config.enableBondingCurveSnipe}
+              onChange={(e) => onConfigChange({ enableBondingCurveSnipe: e.target.checked })}
+              className="w-3.5 h-3.5 rounded bg-surface border-border text-amber-400 focus:ring-0 cursor-pointer"
+            />
+            <span>⚡ Curve Snipe (80-99%)</span>
+          </label>
+
+          <label className="flex items-center gap-1.5 cursor-pointer select-none text-xs font-semibold text-rose-300 bg-rose-950/30 border border-rose-500/40 px-2.5 py-1 rounded-lg">
+            <input
+              type="checkbox"
+              checked={config.enableCabalFilter}
+              onChange={(e) => onConfigChange({ enableCabalFilter: e.target.checked })}
+              className="w-3.5 h-3.5 rounded bg-surface border-border text-rose-400 focus:ring-0 cursor-pointer"
+            />
+            <span>🛡️ Anti-Cabal Cluster (&le;18%)</span>
+          </label>
+
+          <label className="flex items-center gap-1.5 cursor-pointer select-none text-xs font-semibold text-emerald-300 bg-emerald-950/30 border border-emerald-500/40 px-2.5 py-1 rounded-lg">
+            <input
+              type="checkbox"
+              checked={config.enableSmartMoneyMirror}
+              onChange={(e) => onConfigChange({ enableSmartMoneyMirror: e.target.checked })}
+              className="w-3.5 h-3.5 rounded bg-surface border-border text-emerald-400 focus:ring-0 cursor-pointer"
+            />
+            <span>🐋 Smart-Money Mirror</span>
+          </label>
+
+          <label className="flex items-center gap-1.5 cursor-pointer select-none text-xs font-semibold text-cyan-300 bg-cyan-950/30 border border-cyan-500/40 px-2.5 py-1 rounded-lg">
+            <input
+              type="checkbox"
+              checked={config.enableJitoShield}
+              onChange={(e) => onConfigChange({ enableJitoShield: e.target.checked })}
+              className="w-3.5 h-3.5 rounded bg-surface border-border text-cyan-400 focus:ring-0 cursor-pointer"
+            />
+            <span>🔒 Jito MEV Shield</span>
+          </label>
+        </div>
+
         <div className="text-[11px] font-mono text-slate-400">
           Simultaneous Positions: <span className="text-white font-bold">{config.maxConcurrentPositions} max</span> (Active: {activePositionsCount})
         </div>

@@ -107,6 +107,20 @@ export const LiveTokenScanner: React.FC<LiveTokenScannerProps> = ({
                               <Flame className="w-2.5 h-2.5" /> Pump
                             </span>
                           )}
+                          {token.bondingCurveProgress !== undefined && (
+                            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded border ${
+                              token.bondingCurveProgress >= 80
+                                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold'
+                                : 'bg-surface text-slate-400 border-border'
+                            }`}>
+                              ⚡ {token.bondingCurveProgress}%
+                            </span>
+                          )}
+                          {(token.smartMoneyBuysCount || 0) >= 1 && (
+                            <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded font-mono font-bold">
+                              🐋 {token.smartMoneyBuysCount}W
+                            </span>
+                          )}
                         </div>
                         <div className="text-[11px] text-slate-400 font-sans truncate max-w-[120px]">
                           {token.name}
@@ -177,6 +191,24 @@ export const LiveTokenScanner: React.FC<LiveTokenScannerProps> = ({
                       <span className="text-[10px] text-slate-400">
                         Top10: {token.topHoldersPercentage}%
                       </span>
+
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded border font-mono ${
+                          (token.clusteredHoldersPercentage || 0) <= 18
+                            ? 'bg-emerald-950/20 text-emerald-300 border-emerald-500/30'
+                            : 'bg-rose-950/40 text-rose-300 border-rose-500/40 font-bold'
+                        }`}
+                      >
+                        {(token.clusteredHoldersPercentage || 0) <= 18
+                          ? `Sybil: ${token.clusteredHoldersPercentage || 0}%`
+                          : `⚠️ CABAL ${token.clusteredHoldersPercentage}%`}
+                      </span>
+
+                      {token.jitoProtected && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950/30 text-cyan-300 border border-cyan-500/30 font-mono">
+                          🔒 Jito Shield
+                        </span>
+                      )}
                     </div>
                     {!isApproved && (
                       <p className="text-[10px] text-rose-400/90 font-mono mt-1 truncate max-w-[240px]">

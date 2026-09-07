@@ -8,6 +8,7 @@ import { sounds } from '@/lib/audio';
 import { Header } from '@/components/Header';
 import { BotControlPanel } from '@/components/BotControlPanel';
 import { ActivePositions } from '@/components/ActivePositions';
+import { TopTierAlphaRadar } from '@/components/TopTierAlphaRadar';
 import { LiveTokenScanner } from '@/components/LiveTokenScanner';
 import { TradeHistory } from '@/components/TradeHistory';
 import { StrategyExplainerModal } from '@/components/StrategyExplainerModal';
@@ -35,6 +36,13 @@ const DEFAULT_CONFIG: BotConfig = {
   jitoTipSol: 0.001,
   simulationSpeed: 'NORMAL',
   priceFeedMode: 'REAL_TIME_DEX',
+  enableBondingCurveSnipe: true,
+  bondingCurveMinPercent: 80,
+  enableCabalFilter: true,
+  maxCabalClusterPercent: 18,
+  enableSmartMoneyMirror: true,
+  minSmartMoneyWallets: 1,
+  enableJitoShield: true,
 };
 
 export default function Home() {
@@ -601,6 +609,12 @@ export default function Home() {
           config={config}
           onConfigChange={(newCfg) => setConfig((prev) => ({ ...prev, ...newCfg }))}
           activePositionsCount={positions.length}
+        />
+
+        <TopTierAlphaRadar
+          tokens={tokens}
+          config={config}
+          onUpdateConfig={(newCfg) => setConfig((prev) => ({ ...prev, ...newCfg }))}
         />
 
         <ActivePositions

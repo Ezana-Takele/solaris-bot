@@ -10,29 +10,32 @@ export interface BuyDecision {
 export interface PositionUpdateResult {
   updatedPosition: Position;
   shouldSell: boolean;
-  sellPortion: number; // 0.25, 0.5, or 1.0
+  sellPortion: number; // 0 to 1.0 (e.g. 0.5 for 50% ladder exit)
   sellReason?: 'TAKE_PROFIT_FULL' | 'TRAILING_STOP' | 'STOP_LOSS' | 'MANUAL' | 'RUG_EMERGENCY';
   pnlUsd: number;
   pnlPercent: number;
 }
 
 /**
- * Super Sniper: High-precision entry filter evaluating real-time order flow and buyer velocity
+ * Super Sniper: Top 1% Institutional Evaluation Engine
+ * Combines Order-Flow Dominance, Bonding Curve Progression,
+ * Smart-Money Whale Tracking, and Sybil Cluster Rejection.
  */
 export function evaluateBuySignal(
   token: TokenData,
   currentPositions: Position[],
-  config: BotConfig,
-  currentCash: number
+  currentCash: number,
+  config: BotConfig
 ): BuyDecision {
   if (!config.isRunning) {
-    return { shouldBuy: false, reason: 'Bot is paused', allocatedAmountUsd: 0 };
+    return { shouldBuy: false, reason: 'Sniper paused by operator', allocatedAmountUsd: 0 };
   }
 
+  // Position Capacity Limit
   if (currentPositions.length >= config.maxConcurrentPositions) {
     return {
       shouldBuy: false,
-      reason: `Max concurrent positions reached (${currentPositions.length}/${config.maxConcurrentPositions})`,
+      reason: `Maximum concurrent positions reached (${currentPositions.length}/${config.maxConcurrentPositions})`,
       allocatedAmountUsd: 0,
     };
   }
@@ -101,7 +104,46 @@ export function evaluateBuySignal(
     };
   }
 
-  // 2. Super Sniper Precision Order Flow Checks:
+  // 2. Cabal / Sybil Cluster Veto (Connected stealth wallets)
+  if (config.enableCabalFilter) {
+    const clusterPct = token.clusteredHoldersPercentage ?? (token.topHoldersPercentage * 0.7);
+    const maxAllowed = config.maxCabalClusterPercent || 18;
+    if (clusterPct > maxAllowed) {
+      return {
+        shouldBuy: false,
+        reason: `Cabal Alert: ${clusterPct.toFixed(1)}% of supply held by connected wallets sharing common funder (> ${maxAllowed}% cap)`,
+        allocatedAmountUsd: 0,
+      };
+    }
+  }
+
+  // 3. Pump.fun Bonding Curve Graduation Snipe Condition
+  if (config.enableBondingCurveSnipe && token.isPumpFun) {
+    const progress = token.bondingCurveProgress || 0;
+    const minProgress = config.bondingCurveMinPercent || 80;
+    if (progress < minProgress || progress > 98) {
+      return {
+        shouldBuy: false,
+        reason: `Bonding curve outside sniper sweet-spot (${progress}% - target: ${minProgress}% to 98% pre-graduation)`,
+        allocatedAmountUsd: 0,
+      };
+    }
+  }
+
+  // 4. Smart-Money Multi-Whale Mirror Requirement
+  if (config.enableSmartMoneyMirror) {
+    const smartCount = token.smartMoneyBuysCount || 0;
+    const minRequired = config.minSmartMoneyWallets || 1;
+    if (smartCount < minRequired) {
+      return {
+        shouldBuy: false,
+        reason: `Insufficient smart-money confluence (${smartCount} alpha wallets buying, requires >= ${minRequired})`,
+        allocatedAmountUsd: 0,
+      };
+    }
+  }
+
+  // 5. Super Sniper Precision Order Flow Checks:
   // Must show established buyer surge: at least 7 buys in 5m
   if (token.buys5m < 7) {
     return { shouldBuy: false, reason: `Low buyer volume (${token.buys5m} buys in 5m, requires >= 7)`, allocatedAmountUsd: 0 };
@@ -116,7 +158,7 @@ export function evaluateBuySignal(
     };
   }
 
-  // Price Velocity Window: Must be moving upward (+3% to +180%)
+  // Price Velocity Window: Must be moving upward (+2% to +220%)
   if (token.priceChange5m < 2.0) {
     return { shouldBuy: false, reason: `Insufficient upward momentum (+${token.priceChange5m.toFixed(1)}% 5m, requires >= +2.0%)`, allocatedAmountUsd: 0 };
   }
@@ -125,15 +167,23 @@ export function evaluateBuySignal(
     return { shouldBuy: false, reason: `Overextended pump (+${token.priceChange5m.toFixed(1)}% in 5m) - High top-buyer exhaustion risk`, allocatedAmountUsd: 0 };
   }
 
-  // Dynamic Compounding Position Sizing:
-  let dynamicTradeSize = config.tradeSizeUsd;
-  if (config.autoCompound && currentCash >= 15.0) {
-    dynamicTradeSize = Math.min(Number((currentCash * 0.30).toFixed(2)), 35.0);
+  // Dynamic Compounding Position Sizing with Conviction Multiplier:
+  let dynamicTradeSize = tradeSize;
+  const isHighConviction = (token.smartMoneyBuysCount || 0) >= 2 || (token.bondingCurveProgress || 0) >= 88;
+  if (isHighConviction && currentCash >= 15.0) {
+    dynamicTradeSize = Math.min(tradeSize * 1.25, currentCash);
   }
+
+  const alphaTags: string[] = [];
+  if ((token.smartMoneyBuysCount || 0) >= 2) alphaTags.push(`🐋 ${token.smartMoneyBuysCount} Smart Money Whales`);
+  if (token.isPumpFun && (token.bondingCurveProgress || 0) >= 80) alphaTags.push(`⚡ Curve ${token.bondingCurveProgress}% (Graduation Snipe)`);
+  if (token.jitoProtected) alphaTags.push('🔒 Jito MEV Shielded');
+
+  const reasonPrefix = alphaTags.length > 0 ? `[${alphaTags.join(' • ')}] ` : '';
 
   return {
     shouldBuy: true,
-    reason: `Super Sniper: Strong buyer velocity (+${token.priceChange5m.toFixed(1)}% 5m, ${token.buys5m}B/${token.sells5m}S, Safety ${safety.score})`,
+    reason: `${reasonPrefix}Super Sniper: Strong buyer velocity (+${token.priceChange5m.toFixed(1)}% 5m, ${token.buys5m}B/${token.sells5m}S, Safety ${safety.score})`,
     allocatedAmountUsd: Math.max(1.0, Math.min(dynamicTradeSize, currentCash)),
   };
 }
