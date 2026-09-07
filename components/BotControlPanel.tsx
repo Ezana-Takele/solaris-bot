@@ -65,6 +65,28 @@ export const BotControlPanel: React.FC<BotControlPanelProps> = ({
         requireFreezeRevoked: true,
         autoCompound: true,
       });
+    } else if (preset === 'QUANTUM') {
+      onConfigChange({
+        tradeSizeUsd: 2.50,
+        maxConcurrentPositions: 3,
+        minSafetyScore: 72,
+        takeProfitPercent: 100,
+        stopLossPercent: 15,
+        trailingStopPercent: 12,
+        minLiquidityUsd: 2500,
+        requireMintRevoked: true,
+        requireFreezeRevoked: true,
+        autoCompound: true,
+        enableBondingCurveSnipe: true,
+        bondingCurveMinPercent: 82,
+        enableCabalFilter: true,
+        maxCabalClusterPercent: 16,
+        enableSmartMoneyMirror: true,
+        minSmartMoneyWallets: 1,
+        enableJitoShield: true,
+        slippagePercent: 3.5,
+        jitoTipSol: 0.002,
+      });
     }
   };
 
@@ -161,7 +183,30 @@ export const BotControlPanel: React.FC<BotControlPanelProps> = ({
           <span>Strategy Presets (Tailored for Maximum ROI)</span>
           <span className="text-[11px] text-slate-500 font-normal">Click to apply preset</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+          <button
+            type="button"
+            onClick={() => applyPreset('QUANTUM')}
+            className={`p-3 rounded-xl border text-left transition-all relative overflow-hidden ${
+              config.tradeSizeUsd === 2.5 && config.takeProfitPercent === 100
+                ? 'bg-gradient-to-br from-amber-950/60 via-[#131926] to-emerald-950/40 border-amber-400 text-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.35)] ring-1 ring-amber-400'
+                : 'bg-surface hover:bg-surface-light border-amber-500/40 text-amber-200'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-1 text-xs font-black text-amber-400">
+                <Sparkles className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+                🏆 Quantum Alpha
+              </div>
+              <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+                1% Default
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-200">
+              $2.50 bets • 100% TP (Risk-free) • -15% SL • Curve 82%
+            </p>
+          </button>
+
           <button
             type="button"
             onClick={() => applyPreset('MOONSHOT')}

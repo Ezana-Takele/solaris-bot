@@ -21,27 +21,27 @@ const DEFAULT_CONFIG: BotConfig = {
   autoCompound: true,
   balanceUsd: 10.0,
   initialBalanceUsd: 10.0,
-  tradeSizeUsd: 3.0,
+  tradeSizeUsd: 2.50, // Optimal $2.50 sizing for $10 starting bankroll (4 disciplined bullets)
   maxConcurrentPositions: 3,
-  minSafetyScore: 70,
-  minLiquidityUsd: 2000,
-  takeProfitPercent: 120,
-  stopLossPercent: 18,
-  trailingStopPercent: 20,
-  maxTopHolderPercent: 25,
+  minSafetyScore: 72, // Strict safety filter (>72)
+  minLiquidityUsd: 2500, // Minimum liquidity depth
+  takeProfitPercent: 100, // +100% (2x) -> 50% partial exit recovers 100% capital for risk-free moonbag
+  stopLossPercent: 15, // -15% disciplined cut preserving 85% capital
+  trailingStopPercent: 12, // -12% tight trailing stop locks peak profits
+  maxTopHolderPercent: 22, // Tight cap on holder concentration
   requireMintRevoked: true,
   requireFreezeRevoked: true,
   autoSniping: true,
-  slippagePercent: 5,
-  jitoTipSol: 0.001,
+  slippagePercent: 3.5, // Strict slippage protection against MEV front-running
+  jitoTipSol: 0.002, // Sweet-spot validator priority bribe for atomic block-0 inclusion
   simulationSpeed: 'NORMAL',
   priceFeedMode: 'REAL_TIME_DEX',
   enableBondingCurveSnipe: true,
-  bondingCurveMinPercent: 80,
+  bondingCurveMinPercent: 82, // 82% to 97% sweet-spot pre-graduation window
   enableCabalFilter: true,
-  maxCabalClusterPercent: 18,
+  maxCabalClusterPercent: 16, // Strictly <= 16% connected sybil supply
   enableSmartMoneyMirror: true,
-  minSmartMoneyWallets: 1,
+  minSmartMoneyWallets: 1, // Require confirmed alpha wallet accumulation
   enableJitoShield: true,
 };
 

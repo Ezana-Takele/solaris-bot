@@ -218,7 +218,7 @@ export function updatePositionState(
   };
 
   // 1. Catastrophic Rug / Flash Dump Emergency Stop
-  if (pnlPercent <= -35) {
+  if (pnlPercent <= -25) {
     return {
       updatedPosition,
       shouldSell: true,
